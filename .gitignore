@@ -1,0 +1,4 @@
+*.pdf
+import_patterns.py
+schema.sql
+__pycache__/

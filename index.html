@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pattern Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<p id="boot" style="padding:1.5rem;font-family:system-ui,sans-serif">
+  Loading... If this message stays, the page scripts didn't load. Make sure index.html sits in the same
+  folder as config.js, with the css/ and js/ folders beside it.
+</p>
+<script>
+  window.addEventListener("error", (e) =>
+    document.body.insertAdjacentHTML("afterbegin",
+      '<p style="padding:1rem;color:#b00020;font-family:system-ui,sans-serif">Error: ' + e.message + "</p>"));
+</script>
+
+<!-- LOGIN -->
+<section id="login" hidden>
+  <h1>Pattern Library</h1>
+  <input id="email" type="email" placeholder="Email" autocomplete="username">
+  <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+  <button id="loginBtn" class="btn">Log in</button>
+  <p id="loginMsg" class="msg" role="alert"></p>
+</section>
+
+<!-- APP -->
+<main id="app" hidden>
+  <header>
+    <h1>Pattern Library</h1>
+    <span id="count"></span>
+    <button id="logoutBtn" class="link">Log out</button>
+  </header>
+
+  <div class="finder">
+    <input id="search" type="search" placeholder="Search patterns, or type a tag like &quot;penguin&quot;" autocomplete="off"
+           role="combobox" aria-expanded="false" aria-controls="suggest" aria-autocomplete="list">
+    <ul id="suggest" role="listbox" hidden></ul>
+  </div>
+  <div id="activeTags" aria-label="Active tag filters"></div>
+  <div id="quickTags" aria-label="Popular tags"></div>
+  <p id="empty" class="msg" hidden>No patterns match. Remove a tag or clear the search.</p>
+  <div id="grid"></div>
+</main>
+
+<!-- EDIT DIALOG -->
+<dialog id="editDlg">
+  <form method="dialog" id="editForm">
+    <h2 id="editTitle">Edit pattern</h2>
+    <label>Title <input name="title" required></label>
+    <label>Designer <input name="designer"></label>
+    <label>Time to make <input name="time_to_make" placeholder="e.g. 6 hours"></label>
+    <label>Yarn weight <input name="yarn_weight" placeholder="e.g. Worsted"></label>
+    <label>Hook size <input name="hook_size" placeholder="e.g. 5.0 mm"></label>
+    <label>Difficulty <input name="difficulty" placeholder="e.g. Beginner"></label>
+    <label>Tags (comma-separated) <input name="tags" placeholder="amigurumi, animals, worsted"></label>
+    <div class="row">
+      <button type="button" id="deleteBtn" class="link danger">Delete pattern</button>
+      <button type="button" id="cancelEdit" class="link">Cancel</button>
+      <button type="submit" class="btn">Save changes</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
