@@ -93,3 +93,10 @@ dialog label { display: grid; gap: 0.2rem; margin-bottom: 0.7rem; font-size: 0.9
   position: absolute; top: 1rem; left: 1rem; font-size: 0.75rem; font-weight: 600;
   background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 0.1rem 0.6rem;
 }
+
+#pickDlg { width: min(24rem, 92vw); }
+#pickBody .thumb { width: min(16rem, 100%); margin: 0 auto 0.8rem; }
+#pickBody h3 { font-size: 1.25rem; margin: 0 0 0.4rem; }
+#pickBody .mini { margin-top: 0.6rem; }
+#pickBody .msg { font-size: 0.85rem; margin: 0.6rem 0 0; }
+#pickClose { margin-right: auto; }

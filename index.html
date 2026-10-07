@@ -35,7 +35,8 @@
   <header>
     <h1>Pattern Library</h1>
     <span id="count"></span>
-    <button id="addLinkBtn" class="btn">Add link</button>
+    <button id="randomBtn" class="btn">Surprise me</button>
+    <button id="addLinkBtn" class="link">Add link</button>
     <button id="logoutBtn" class="link">Log out</button>
   </header>
 
@@ -49,6 +50,16 @@
   <p id="empty" class="msg" hidden>No patterns match. Remove a tag or clear the search.</p>
   <div id="grid"></div>
 </main>
+
+<!-- RANDOM PICK DIALOG -->
+<dialog id="pickDlg">
+  <div id="pickBody"></div>
+  <div class="row">
+    <button type="button" id="pickClose" class="link">Close</button>
+    <button type="button" id="pickAgain" class="link">Pick another</button>
+    <button type="button" id="pickOpen" class="btn">Open pattern</button>
+  </div>
+</dialog>
 
 <!-- EDIT DIALOG -->
 <dialog id="editDlg">

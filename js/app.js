@@ -92,6 +92,10 @@ function matches(p) {
   return [p.title, p.designer, host(p), ...p.tags].some((s) => (s || "").toLowerCase().includes(q));
 }
 
+const factsHtml = (p) =>
+  [["By", p.designer], ["Time", p.time_to_make], ["Yarn", p.yarn_weight], ["Hook", p.hook_size], ["Level", p.difficulty]]
+    .filter(([, v]) => v).map(([k, v]) => `<li><b>${k}:</b> ${esc(v)}</li>`).join("");
+
 function render() {
   const shown = patterns.filter(matches);
   $("count").textContent = `${shown.length} of ${patterns.length} patterns`;
@@ -107,8 +111,7 @@ function render() {
 
   $("grid").innerHTML = shown.map((p) => {
     const img = thumbUrls[p.thumb_path];
-    const facts = [["By", p.designer], ["Time", p.time_to_make], ["Yarn", p.yarn_weight], ["Hook", p.hook_size], ["Level", p.difficulty]]
-      .filter(([, v]) => v).map(([k, v]) => `<li><b>${k}:</b> ${esc(v)}</li>`).join("");
+    const facts = factsHtml(p);
     return `<article class="card" data-id="${p.id}" tabindex="0" role="link" aria-label="Open ${esc(p.title)}">
       ${img ? `<img class="thumb" src="${img}" alt="Preview of ${esc(p.title)}" loading="lazy">` : `<div class="thumb ph">${p.thumb_path ? "" : esc(host(p) || "No preview")}</div>`}
       ${isLinkOnly(p) ? `<span class="badge">${esc(host(p))}</span>` : ""}
@@ -198,6 +201,28 @@ $("grid").addEventListener("click", (e) => {
 $("grid").addEventListener("keydown", (e) => {
   if (e.key === "Enter" && e.target.classList.contains("card")) openPdf(e.target.dataset.id);
 });
+
+// ---------- Random pick ----------
+let pick = null;
+function showPick() {
+  const pool = patterns.filter(matches);               // respects current search and tag filters
+  if (!pool.length) return alert("No patterns match your current filters.");
+  const options = pool.length > 1 ? pool.filter((p) => p !== pick) : pool;   // avoid repeating the last pick
+  pick = options[Math.floor(Math.random() * options.length)];
+  const img = thumbUrls[pick.thumb_path];
+  $("pickBody").innerHTML = `
+    ${img ? `<img class="thumb" src="${img}" alt="Preview of ${esc(pick.title)}">` : `<div class="thumb ph">${esc(host(pick) || "No preview")}</div>`}
+    <h3>${esc(pick.title)}</h3>
+    <ul class="facts">${factsHtml(pick)}</ul>
+    <div class="mini">${pick.tags.map((t) => `<span>${esc(t)}</span>`).join("")}</div>
+    <p class="msg">${pool.length === patterns.length ? "Picked from your whole library" : `Picked from ${pool.length} matching pattern${pool.length === 1 ? "" : "s"}`}</p>`;
+  $("pickOpen").textContent = isLinkOnly(pick) ? "Open link" : "Open pattern";
+  if (!$("pickDlg").open) $("pickDlg").showModal();
+}
+$("randomBtn").onclick = showPick;
+$("pickAgain").onclick = showPick;
+$("pickClose").onclick = () => $("pickDlg").close();
+$("pickOpen").onclick = () => pick && openPdf(pick.id);
 
 // ---------- Edit ----------
 function openEdit(id) {
