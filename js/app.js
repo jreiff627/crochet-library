@@ -209,6 +209,8 @@ function openEdit(id) {
   ["title", "designer", "time_to_make", "yarn_weight", "hook_size", "difficulty", "url"].forEach((k) => (f[k].value = (p && p[k]) || ""));
   f.tags.value = p ? p.tags.join(", ") : "";
   f.thumb.value = "";
+  const showLink = !p || isLinkOnly(p);
+  document.querySelectorAll(".link-only").forEach((el) => (el.hidden = !showLink));
   $("editDlg").showModal();
 }
 $("addLinkBtn").onclick = () => openEdit(null);
@@ -252,22 +254,25 @@ $("editForm").addEventListener("submit", async (e) => {
   fields.title = fields.title || "Untitled pattern";
   fields.tags = [...new Set(f.tags.value.split(",").map((t) => t.trim().toLowerCase()).filter(Boolean))];
 
-  fields.url = null;                       // only http(s) links are accepted
-  const raw = f.url.value.trim();
-  if (raw) {
-    try {
-      const u = new URL(/^[a-z][a-z0-9+.-]*:/i.test(raw) ? raw : "https://" + raw);
-      if (!/^https?:$/.test(u.protocol)) throw new Error("bad protocol");
-      fields.url = u.href;
-    } catch { return alert("That link doesn't look right. Paste the full address, like https://www.instagram.com/p/..."); }
+  const isPdf = !!(existing && existing.file_path);   // PDF patterns keep their own file and thumbnail
+  if (!isPdf) {
+    fields.url = null;                       // only http(s) links are accepted
+    const raw = f.url.value.trim();
+    if (raw) {
+      try {
+        const u = new URL(/^[a-z][a-z0-9+.-]*:/i.test(raw) ? raw : "https://" + raw);
+        if (!/^https?:$/.test(u.protocol)) throw new Error("bad protocol");
+        fields.url = u.href;
+      } catch { return alert("That link doesn't look right. Paste the full address, like https://www.instagram.com/p/..."); }
+    }
+    if (!fields.url) return alert("Add a link for this pattern.");
   }
-  if (!(existing && existing.file_path) && !fields.url) return alert("Add a link for this pattern.");
 
   const btn = $("saveBtn");
   btn.disabled = true; btn.textContent = "Saving...";
   try {
     let oldThumb = null;
-    const file = f.thumb.files[0];
+    const file = isPdf ? null : f.thumb.files[0];
     if (file) {
       const blob = await shrinkImage(file);
       const path = `thumbs/${crypto.randomUUID()}.jpg`;
